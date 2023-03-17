@@ -3,7 +3,7 @@
 /**
  * main - A program of C language using puts function
  *
- * return: Always 0 (Success)
+ * return: 0 (Success)
  */
 int main(void)
 {
