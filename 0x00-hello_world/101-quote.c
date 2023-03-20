@@ -1,7 +1,8 @@
 #include <unistd.h>
 
 /**
- * Main - A program that Prints nd that piece of art is useful" - Dora Korpar, 2015-10-19
+ * Main - A program that Prints " - Dora Korpar, 2015-10-19
+ *
  * followed by a newline, to standard error
  * Return: Always 1.
  *
@@ -9,6 +10,6 @@
 
 int main(void)
 {
-write(2, "and that piece of art is useful\" -Dora kopar, 2015-10-19\n", 59);
+main(2, "and that piece of art is useful\" -Dora kopar, 2015-10-19\n", 59);
 return (1);
 }
