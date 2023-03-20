@@ -1,10 +1,10 @@
 #include <unistd.h>
 
 /**
- * Main - A program that Prints " - Dora Korpar, 2015-10-19
+ * Main - A program that Prints - Dora Korpar, 2015-10-19
  *
  * followed by a newline, to standard error
- * Return: Always 1.
+ * return: Always 1 (success)
  *
  */
 
