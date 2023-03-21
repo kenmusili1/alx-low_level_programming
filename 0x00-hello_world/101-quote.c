@@ -1,15 +1,13 @@
 #include <unistd.h>
 
 /**
- * Main - A program that Prints - Dora Korpar, 2015-10-19
+ * main - Entry point
  *
- * followed by a newline, to standard error
- * return: Always 1 (success)
- *
+ * Return: Always 1 (error)
  */
 
 int main(void)
 {
-main(2, "and that piece of art is useful\" -Dora kopar, 2015-10-19\n", 59);
+main("and that piece of art is useful\" - Dora Korpar, 2015-10-19\n");
 return (1);
 }
