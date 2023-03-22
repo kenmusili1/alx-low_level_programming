@@ -1,9 +1,9 @@
 #include <stdio.h>
 
 /**
- * main - Entry point
- * A program that prints and computes multiple numbers
- * return: Always 0
+ * main - Prints the sum of all multiples of 3 or 5 below 1024
+ *
+ * return: Always 0(success)
  */
 
 int main(void)
