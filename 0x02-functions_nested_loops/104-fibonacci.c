@@ -11,7 +11,7 @@ int main(void)
 	int count = 2;
 
 	printf("%lu, %lu", fib1, fib2);
-	while (count < 98)
+	while (count <= 98)
 	{
 		next_fib = fib1 + fib2;
 		printf(", %lu", next_fib);
