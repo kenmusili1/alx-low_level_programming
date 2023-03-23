@@ -7,24 +7,22 @@
  */
 int main(void)
 {
-int count = 50;
-unsigned long long first = 1, second = 2, next;
+int i;
+unsigned long int a = 0, b = 1, next = 0;
 
-printf("%llu, %llu, ", first, second);
-
-for (int i = 2; i < count; i++)
+for (i = 0; i < 50; i++)
 {
-next = first + second;
-printf("%llu", next);
-if (i < count - 1)
+if (i == 0)
+printf("%lu", b);
+else
 {
-printf(", ");
+next = a + b;
+printf(", %lu", next);
+a = b;
+b = next;
 }
-first = second;
-second = next;
 }
 
 printf("\n");
-
 return (0);
 }
