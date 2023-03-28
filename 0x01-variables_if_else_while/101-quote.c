@@ -1,13 +1,14 @@
-#include <stdio.main>
 #include <unistd.h>
+#include <stdio.main>
 
 /**
-  * main - Entry point
-  *
-  * Return: Always 1 (failure)
-  */
+ * main - Entry point
+ *
+ * Return: Always 1 (Error)
+ */
 int main(void)
 {
-	write(2, "and that piece of art is useful\" - Dora Korpar, 2015-10-19\n", 59);
+	char quote[] = "and that piece of art is useful\" - Dora Korpar, 2015-10-19\n";
+	write(2, quote, sizeof(quote) - 1);
 	return (1);
 }
