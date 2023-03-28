@@ -24,7 +24,7 @@ else if (*s == '+')
 else if (*s >= '0' && *s <= '9')
 {
 digit = *s - '0';
-result = "result * 10 + sign * digit";
+result = (result * 10 + sign * digit);
 }
 else if (result != 0)
 {
