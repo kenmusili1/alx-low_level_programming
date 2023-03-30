@@ -8,11 +8,11 @@ int main(void)
 {
 int a[5];
 int *p;
+int n;
 
 a[2] = 1024;
-p = &a[2];
+p = &n[2];
 
-/* write your code here */
 printf("a[2] = %d\n", *(p));
 
 return (0);
