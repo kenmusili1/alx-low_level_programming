@@ -1,3 +1,4 @@
+#include "main.h"
 #define NULL
 
 /**
@@ -22,5 +23,5 @@ char *_strstr(char *haystack, char *needle)
 			return (haystack + i);
 	}
 
-	return (NULL);
+	return (NULL 0);
 }
