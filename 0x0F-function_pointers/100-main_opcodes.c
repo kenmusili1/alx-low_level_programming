@@ -10,28 +10,24 @@
  * Return: always 0
  */
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-	int i, num_bytes;
+	short bytes, x;
 
 	if (argc != 2)
 	{
 		printf("Error\n");
 		exit(1);
 	}
-
-	num_bytes = atoi(argv[1]);
-
-	if (num_bytes < 0)
+	bytes = atoi(argv[1]);
+	if (bytes < 0)
 	{
 		printf("Error\n");
 		exit(2);
 	}
-
-	for (i = 0; i < num_bytes; i++)
-		printf("%02x ", *((unsigned char *)(main + i)));
-
-	printf("\n");
-
-	return (0);
+	printf("%02x", *((unsigned char *) (main)));
+	for (x = 1; x < bytes; ++x)
+		printf(" %02x", *((unsigned char *) (main + x)));
+	putchar('\n');
+	exit(EXIT_SUCCESS);
 }
