@@ -3,49 +3,54 @@
 #include <stdlib.h>
 
 /**
- * print_listint_safe - prints a listint_t linked list
- * @head: pointer to the head of the list
+ * print_listint_safe - Prints a listint_t linked list, handles loops
+ * @head: Pointer to the beginning of the list
  *
- * Return: the number of nodes in the list
+ * Return: The number of nodes in the list
  */
 size_t print_listint_safe(const listint_t *head)
 {
 	size_t count = 0;
 	listint_t *loop_node = NULL;
+	const listint_t *temp = head;
 
-	if (head == NULL)
-		exit(98);
-
-	loop_node = find_listint_loop((listint_t *)head);
-	while (head != NULL)
+	loop_node = find_loop(head);
+	while (temp != NULL)
 	{
-		printf("[%p] %d\n", (void *)head, head->n);
+		printf("[%p] %d\n", (void *)temp, temp->n);
 		count++;
-		if (head == loop_node)
-		{
-			printf("-> [%p] %d\n", (void *)head, head->n);
+		if (temp == loop_node)
 			break;
-		}
-		head = head->next;
+		temp = temp->next;
+	}
+
+	if (loop_node)
+	{
+		printf("-> [%p] %d\n", (void *)loop_node, loop_node->n);
+		count++;
 	}
 
 	return (count);
 }
 
 /**
- * find_listint_loop - finds the node where a linked list loops
- * @head: pointer to the head of the list
+ * find_loop - Finds the first node of a loop in a linked list
+ * @head: Pointer to the beginning of the list
  *
- * Return: the node where the loop starts, or NULL if there is no loop
+ * Return: The first node of the loop, or NULL if there is no loop
  */
-listint_t *find_listint_loop(listint_t *head)
+listint_t *find_loop(const listint_t *head)
 {
-	listint_t *slow = head, *fast = head;
+	const listint_t *slow, *fast;
 
-	while (slow != NULL && fast != NULL && fast->next != NULL)
+	if (head == NULL || head->next == NULL)
+		return (NULL);
+
+	slow = head->next;
+	fast = head->next->next;
+
+	while (fast != NULL && fast->next != NULL)
 	{
-		slow = slow->next;
-		fast = fast->next->next;
 		if (slow == fast)
 		{
 			slow = head;
@@ -54,8 +59,10 @@ listint_t *find_listint_loop(listint_t *head)
 				slow = slow->next;
 				fast = fast->next;
 			}
-			return (slow);
+			return ((listint_t *)slow);
 		}
+		slow = slow->next;
+		fast = fast->next->next;
 	}
 
 	return (NULL);
