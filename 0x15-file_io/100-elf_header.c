@@ -34,7 +34,7 @@ void check_arguments(int argc)
 
 void read_write_files(char *file_from, char *file_to)
 {
-	int fd_from, fd_to, ret = 0;
+	int fd_from, fd_to, ret=0;
 	ssize_t num_read, num_written;
 	char buf[1024];
 
@@ -57,6 +57,10 @@ void read_write_files(char *file_from, char *file_to)
 			ret = 99;
 			break;
 		}
+	}
+	if (ret == 0)
+	{
+        /*do something if ret is 0*/
 	}
 	if (num_read == -1)
 	{
@@ -82,9 +86,10 @@ void read_write_files(char *file_from, char *file_to)
  *
  * Return: 0
  */
+
 int main(int argc, char **argv)
 {
-	check_arguments(argc, argv);
+	check_arguments(argc);
 	read_write_files(argv[1], argv[2]);
 	return (0);
 }
