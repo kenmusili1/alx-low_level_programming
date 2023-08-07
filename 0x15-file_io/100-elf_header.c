@@ -6,6 +6,37 @@
 #include <errno.h>
 #include <elf.h>
 
+#define ELF_MAGIC_SIZE      16
+#define ELF_CLASS_SIZE      1
+#define ELF_DATA_SIZE       1
+#define ELF_VERSION_SIZE    1
+#define ELF_OSABI_SIZE      1
+#define ELF_ABIVERSION_SIZE 1
+#define ELF_TYPE_SIZE       2
+#define ELF_ENTRY_ADDR_SIZE 8
+#define EXIT_FAILURE_ELF    98
+
+/**
+ * Function to read ELF header data from the file descriptor
+ *@fd: read
+ *@char: Arguments
+ *@size_t: size
+ *
+ * return (0)
+ *
+ */
+
+int read_elf_header(int fd, char *buffer, size_t size)
+{
+	ssize_t bytes_read = read(fd, buffer, size);
+	if (bytes_read == -1)
+	{
+		perror("read");
+		exit(EXIT_FAILURE_ELF);
+	}
+	return bytes_read;
+}
+
 /**
  * check_arguments - checks if the arguments are valid or not
  * @argv: array of arguments
@@ -32,51 +63,89 @@ void check_arguments(int argc)
  * Return: 0
  */
 
-void read_write_files(char *file_from, char *file_to)
+void display_elf_header(char *filename)
 {
-	int fd_from, fd_to, ret=0;
-	ssize_t num_read, num_written;
-	char buf[1024];
+	int fd = open(filename, O_RDONLY);
+	if (fd == -1)
+	{
+		perror("open");
+		exit(EXIT_FAILURE_ELF);
+	}
 
-	fd_from = open(file_from, O_RDONLY);
-	if (fd_from == -1)
+	char magic[ELF_MAGIC_SIZE];
+	read_elf_header(fd, magic, ELF_MAGIC_SIZE);
+
+	if (magic[0] != 0x7f || magic[1] != 'E' || magic[2] != 'L' || magic[3] != 'F')
 	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file_from);
+		fprintf(stderr, "Error: Not an ELF file.\n");
+		exit(EXIT_FAILURE_ELF);
 	}
-	fd_to = open(file_to, O_WRONLY | O_CREAT | O_TRUNC, 0664);
-	if (fd_to == -1)
+
+	char elf_class;
+	read_elf_header(fd, &elf_class, ELF_CLASS_SIZE);
+
+	char elf_data;
+	read_elf_header(fd, &elf_data, ELF_DATA_SIZE);
+
+	char elf_version;
+	read_elf_header(fd, &elf_version, ELF_VERSION_SIZE);
+
+	char elf_osabi;
+	read_elf_header(fd, &elf_osabi, ELF_OSABI_SIZE);
+
+	char elf_abiversion;
+	read_elf_header(fd, &elf_abiversion, ELF_ABIVERSION_SIZE);
+
+	uint16_t elf_type;
+	read_elf_header(fd, (char *)&elf_type, ELF_TYPE_SIZE);
+
+	uint64_t entry_addr;
+	read_elf_header(fd, (char *)&entry_addr, ELF_ENTRY_ADDR_SIZE);
+
+	close(fd);
+
+	printf("ELF Header:\n");
+	printf("  Magic:   ");
+	for (int i = 0; i < ELF_MAGIC_SIZE; i++)
+		printf("%02x ", (unsigned char)magic[i]);
+	printf("\n");
+	printf("  Class:                             ELF%d\n", elf_class == 1 ? 32 : 64);
+	printf("  Data:                              %s endian\n", elf_data == 1 ? "little" : "big");
+	printf("  Version:                           %d (current)\n", elf_version);
+	printf("  OS/ABI:                            ");
+	switch (elf_osabi)
 	{
-		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file_to);
+	case 0x00:
+		printf("UNIX - System V\n");
+		break;
+	case 0x06:
+		printf("UNIX - Solaris\n");
+		break;
+	case 0x53:
+		printf("<unknown: 53>\n");
+		break;
+	default:
+		printf("Unknown OS/ABI\n");
+		break;
 	}
-	while ((num_read = read(fd_from, buf, 1024)) > 0)
+	printf("  ABI Version:                       %d\n", elf_abiversion);
+	printf("  Type:                              ");
+	switch (elf_type)
 	{
-		num_written = write(fd_to, buf, num_read);
-		if (num_written != num_read || num_written == -1)
-		{
-			dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file_to);
-			ret = 99;
-			break;
-		}
+	case 0x01:
+		printf("REL (Relocatable file)\n");
+		break;
+	case 0x02:
+		printf("EXEC (Executable file)\n");
+		break;
+	case 0x03:
+		printf("DYN (Shared object file)\n");
+		break;
+	default:
+		printf("Unknown type\n");
+		break;
 	}
-	if (ret == 0)
-	{
-        /*do something if ret is 0*/
-	}
-	if (num_read == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file_from);
-		ret = 98;
-	}
-	if (close(fd_from) == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_from);
-		ret = 100;
-	}
-	if (close(fd_to) == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_to);
-		ret = 100;
-	}
+	printf("  Entry point address:               0x%lx\n", entry_addr);
 }
 
 /**
@@ -87,9 +156,15 @@ void read_write_files(char *file_from, char *file_to)
  * Return: 0
  */
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-	check_arguments(argc);
-	read_write_files(argv[1], argv[2]);
-	return (0);
+	if (argc != 2)
+	{
+		fprintf(stderr, "Usage: %s elf_filename\n", argv[0]);
+		exit(EXIT_FAILURE_ELF);
+	}
+
+	display_elf_header(argv[1]);
+
+	return 0;
 }
