@@ -1,0 +1,8 @@
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+
+int rand(void) {
+    // Force the selected winning numbers
+    return 9; // Replace with your winning number or logic
+}
